@@ -6,7 +6,7 @@
 #    By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/24 18:45:56 by daniel-cast       #+#    #+#              #
-#    Updated: 2025/04/07 12:46:52 by daniel-cast      ###   ########.fr        #
+#    Updated: 2025/04/09 20:06:37 by daniel-cast      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ EXEC = philo
 RM = rm -f
 FLAGS = -Wall -Wextra -Werror -g3 -I./include # -fsanitize=address
 SRC_DIR = ./src
+LIB_DIR = ./libft_bonus
 INCLUDE_DIR = ./include
 SRC = $(wildcard $(SRC_DIR)/*.c)
 INCLUDE = $(wildcard $(INCLUDE_DIR)/*.h)
@@ -56,16 +57,19 @@ all: $(EXEC)
 
 $(EXEC) : $(OBJS)
 	$(CC) $(FLAGS) $(OBJS) -o $(EXEC)
+	$(MAKE) -C $(LIB_DIR)
 
 %.o: $(SRC_DIR)/%.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 clean:
 	$(RM) $(OBJS)
+	$(MAKE) -C $(LIB_DIR) clean
 
 fclean:
 	@$(RM) $(OBJS) $(EXEC) > /dev/null 2>&1
+	$(MAKE) -C $(LIB_DIR) fclean
 
 re: fclean all
 
-:PHONY. draw
+:PHONY. draw all clean fclean re
