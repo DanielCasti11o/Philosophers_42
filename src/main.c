@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 20:16:23 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/04/10 12:40:31 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/04/12 21:07:45 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int main (int argc, char **argv)
 	t_pth   *pth;
 	checkargs(argc, argv);
 	pth = init_struct(argv);
+	printf("pasa bien por aqui %d \n", pth->data->n_philos);
 	prepare_routine(pth);
 
 	printf("OK\n");

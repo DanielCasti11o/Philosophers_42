@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 14:45:28 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/04/09 14:52:09 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/04/24 11:58:12 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ void    ft_error(char *msg, int f)
 	exit(f);
 }
 
-long ft_atol(const char *nptr)
+int ft_atol(const char *nptr)
 {
-	int	result;
-	int	chsg;
+	long	result;
+	int		chsg;
 
 	chsg = 1;
 	result = 0;
@@ -36,10 +36,7 @@ long ft_atol(const char *nptr)
 		|| *nptr == '\v' || *nptr == '\f' || *nptr == '\r')
 		nptr ++;
 	if (*nptr == '-')
-	{
-		chsg = -1;
-		nptr ++;
-	}
+		ft_error("Value negative not permited\n", 1);
 	else if (*nptr == '+')
 		nptr ++;
 	while ('0' <= *nptr && *nptr <= '9')
@@ -49,5 +46,5 @@ long ft_atol(const char *nptr)
 	}
 	if (result > 2147483647 || result < -2147483647)
 		ft_error("Longitud invalida\n", 1);
-	return (result * chsg);
+	return ((int)result * chsg);
 }
