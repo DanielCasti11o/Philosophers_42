@@ -1,20 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atol.c                                          :+:      :+:    :+:   */
+/*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 14:45:28 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/04/24 11:58:12 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/23 17:43:44 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void    ft_error(char *msg, int f)
+int	ft_atoui(const char *nptr)
 {
-	int i;
+	unsigned int	result;
+
+	result = 0;
+	while (*nptr == ' ' || *nptr == '\t' || *nptr == '\n'
+		|| *nptr == '\v' || *nptr == '\f' || *nptr == '\r')
+	{
+		nptr ++;
+	}
+	while ('0' <= *nptr && *nptr <= '9')
+	{
+		result = result * 10 + (*nptr - '0');
+		nptr ++;
+	}
+	return (result);
+}
+
+void	ft_error(char *msg, int f)
+{
+	int	i;
 
 	i = 0;
 	while (msg[i])
@@ -25,7 +43,7 @@ void    ft_error(char *msg, int f)
 	exit(f);
 }
 
-int ft_atol(const char *nptr)
+int	ft_atol(const char *nptr)
 {
 	long	result;
 	int		chsg;

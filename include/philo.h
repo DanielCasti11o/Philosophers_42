@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:01:43 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/04/24 17:15:08 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/23 17:41:38 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,36 +17,41 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <pthread.h>
+# include <sys/time.h>
 # include "../libft_bonus/libft.h"
 
 typedef struct s_datash
 {
-	int n_philos; // num de philos
-	int time_to_die;
-	int time_to_eat;
-	int time_to_sleep;
-	int eat_required; // comidas requeridas para acabar
-	pthread_mutex_t *forks; // array de mutexes para los tenedores
-	int end_sim;
-}   t_datash;
+	unsigned int	n_philos; // num de philos
+	unsigned int	time_to_die;
+	unsigned int	time_to_eat;
+	unsigned int	time_to_sleep;
+	unsigned int	eat_required; // comidas requeridas para acabar
+	pthread_mutex_t	*forks; // array de mutexes para los tenedores
+	long			end_sim;
+	long			start_time;
+
+}	t_datash;
 
 typedef struct s_philo
 {
-	int id; // identify
-	pthread_t thread;
-	int eat;
-	pthread_mutex_t *right_fk; // tenedores
-	pthread_mutex_t *left_fk;
+	int				id; // identify
+	pthread_t		thread;
+	int				eat;
+	pthread_mutex_t	*right_fk; // tenedores
+	pthread_mutex_t	*left_fk;
+	t_datash		*data;
 
-}   t_philo;
+}	t_philo;
 
 typedef struct s_pth
 {
 	t_datash	*data;
 	t_philo		*philos;
-}t_pth  ;
+}	t_pth;
 
 int			ft_atol(const char *nptr);
+int			ft_atoui(const char *nptr);
 void		ft_error(char *msg, int f);
 void		check_str(char *arg, int argc);
 void		checkargs(int argc, char **argv);
@@ -57,6 +62,5 @@ void		prepare_routine(t_pth *pth);
 void		*do_routine(void *arg);
 
 // void	*ft_philos(void *arg);
-
 
 #endif

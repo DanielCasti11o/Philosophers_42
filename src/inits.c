@@ -6,16 +6,16 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:45:21 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/04/24 12:03:06 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/23 18:05:03 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-pthread_mutex_t *init_forks(int n_philos)
+pthread_mutex_t	*init_forks(int n_philos)
 {
-	int i;
-	pthread_mutex_t *forks;
+	int				i;
+	pthread_mutex_t	*forks;
 
 	forks = malloc(n_philos * sizeof(pthread_mutex_t));
 	if (!forks)
@@ -36,13 +36,13 @@ pthread_mutex_t *init_forks(int n_philos)
 			return (NULL);
 		}
 		printf("nnn--> %d\n", i);
-			i++;
+		i++;
 	}
 	printf("sale good\n");
 	return (forks);
 }
 
-t_datash    *init_data(char **argv)
+t_datash	*init_data(char **argv)
 {
 	t_datash	*data;
 
@@ -51,14 +51,15 @@ t_datash    *init_data(char **argv)
 	printf("n_philos --> %d\n", data->n_philos);
 	if (data->n_philos > 200)
 		ft_error("ERROR: limit exceeded to N_PHILOS\n", 1);
-	data->time_to_die = ft_atol(argv[2]);
-	data->time_to_eat = ft_atol(argv[3]);
-	data->time_to_sleep = ft_atol(argv[4]);
+	data->time_to_die = ft_atoui(argv[2]);
+	data->time_to_eat = ft_atoui(argv[3]);
+	data->time_to_sleep = ft_atoui(argv[4]);
 	if (argv[5])
-		data->eat_required = ft_atol(argv[5]);
+		data->eat_required = ft_atoui(argv[5]);
 	else
 		data->eat_required = 0;
-	data->end_sim = ft_atol(argv[2]); // aún no esta comprobado bien esta variable
+	data->end_sim = ft_atoui(argv[2]); // aún no esta comprobado bien esta variable
+	data->start_time = 0;
 	printf("n_philosss --> %d\n", data->n_philos);
 	data->forks = init_forks(data->n_philos);
 	if (!data->forks)
@@ -67,23 +68,24 @@ t_datash    *init_data(char **argv)
 	return (data);
 }
 
-t_philo *init_philos(t_datash *data)
+t_philo	*init_philos(t_datash *data)
 {
-	t_philo *philo;
-	int i;
+	t_philo	*philo;
+	int		i;
 
 	i = 0;
 	printf("sabes --> %d\n", data->n_philos);
-
 	philo = malloc(data->n_philos * sizeof(t_philo));
 	while (i < data->n_philos)
 	{
 		printf("entra al bucle --> i---> %d philos-->%d \n", i, data->n_philos);
 		philo[i].id = i;
 		philo[i].left_fk = &data->forks[i];
-		printf("aqui esta\n");
-		philo[i].eat= 0;
+		printf("left --> %p \n", philo[i].left_fk);
+		philo[i].eat = 0;
 		philo[i].right_fk = &(data->forks[(i + 1) % data->n_philos]);
+		printf("right --> %p \n", philo[i].right_fk);
+		philo[i].data = data;
 		printf("el problema\n");
 		i++;
 	}
@@ -104,5 +106,4 @@ t_pth	*init_struct(char **argv)
 	printf("n_philos aibaros --> %d\n", pth->data->n_philos);
 	pth->philos = init_philos(pth->data);
 	return (pth);
-	// do_routine(pth);
 }
