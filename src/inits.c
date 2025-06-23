@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:45:21 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/23 18:05:03 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/23 19:42:20 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,11 @@ t_datash	*init_data(char **argv)
 	else
 		data->eat_required = 0;
 	data->end_sim = ft_atoui(argv[2]); // aún no esta comprobado bien esta variable
+	data->eat = 0;
 	data->start_time = 0;
 	printf("n_philosss --> %d\n", data->n_philos);
+	if (pthread_mutex_init(&data->death, NULL) != 0)
+		pthread_mutex_destroy(&data->death);
 	data->forks = init_forks(data->n_philos);
 	if (!data->forks)
 		return (free(data), NULL);
@@ -82,9 +85,9 @@ t_philo	*init_philos(t_datash *data)
 		philo[i].id = i;
 		philo[i].left_fk = &data->forks[i];
 		printf("left --> %p \n", philo[i].left_fk);
-		philo[i].eat = 0;
 		philo[i].right_fk = &(data->forks[(i + 1) % data->n_philos]);
 		printf("right --> %p \n", philo[i].right_fk);
+		philo[i].is_dead = false;
 		philo[i].data = data;
 		printf("el problema\n");
 		i++;

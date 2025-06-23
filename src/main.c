@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 20:16:23 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/23 17:05:21 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/23 19:26:47 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,14 @@
 
 int	main(int argc, char **argv)
 {
-	t_pth	*pth;
+	t_pth		*pth;
+	pthread_t	keeper;
 
 	checkargs(argc, argv);
 	pth = init_struct(argv);
 	printf("pasa bien por aqui %d \n", pth->data->n_philos);
 	prepare_routine(pth);
+	pthread_create(&keeper, NULL, keeper_monitor, pth);
+	pthread_join(keeper, NULL);
 	printf("OK\n");
 }

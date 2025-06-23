@@ -6,11 +6,31 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 20:22:22 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/23 17:15:30 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/23 20:05:35 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
+
+void	keeper_monitor(t_pth *pth)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_lock(&pth->data->death);
+	while (pth->philos[i].is_dead != true)
+	{
+		if (pth->philos[i].is_dead == true)
+		{
+			printf("\033[1;31m The philo ID %d is dead! \033[0m\n");
+			pthread_mutex_unlock(&pth->data->death);
+			pthread_mutex_destroy(&pth->data->death);
+			return ;
+		}
+		i++;
+	}
+	pthread_mutex_unlock(&pth->data->death);
+}
 
 void	get_times(t_philo *philos)
 {
@@ -22,8 +42,8 @@ void	get_times(t_philo *philos)
 	milsegs = (start.tv_sec * 1000) + (start.tv_usec / 1000);
 	end_time = (philos->data->time_to_die * 1000) + milsegs;
 	philos->data->end_sim = end_time;
-	philos->data->time_to_eat += milsegs * 1000; // pasarlo a milisegs
-	philos->data->time_to_sleep += milsegs * 1000;
+	philos->data->time_to_eat *= 1000; // pasarlo a milisegs
+	philos->data->time_to_sleep *= 1000;
 	philos->data->start_time = milsegs;
 	printf("tiempo --> %ld\n", milsegs);
 	printf("ÑÑÑÑÑÑÑ  tiempo time to eat --> %ld  ÑÑÑÑÑÑÑ \n", philos->data->time_to_eat);
@@ -31,14 +51,17 @@ void	get_times(t_philo *philos)
 	printf("END  tiempo fin de simulacion --> %ld  END   \n", end_time);
 }
 
-void	ft_sleep(t_philo *philo)
+void	ft_sleep(t_philo *philo, int i)
 {
-	philo->data->start_time += philo->data->time_to_sleep;
-	if (philo->data->start_time >= philo->data->end_sim)
-	{
-		printf("sale\n");
-		exit(1);
-	}
+	philo[i].data->start_time += philo[i].data->time_to_sleep;
+	printf("\033[0;34m Sleep... \033[0m %d\n", philo[i].id);
+	// if (philo.data->start_time >= philo.data->end_sim)
+	// {
+	// 	philo.is_dead = true;
+	// 	return ;
+	// 			// printf("sale\n");
+	// 	// exit(1);
+	// }
 }
 
 void	*do_routine(void *arg)
@@ -49,23 +72,28 @@ void	*do_routine(void *arg)
 
 	i = 0;
 	philos = (t_philo *)arg;
+	get_times(philos);
 	while (1)
 	{
-		get_times(philos);
-		printf("\033[0;31m Thinking... \033[0m %d \n", philos->id);
-		pthread_mutex_lock(philos->left_fk);
-		pthread_mutex_lock(philos->right_fk);
-		printf("\033[0;32m the philo %d is eating...\033[0m\n", philos->id);
-		philos[i].eat++;
-		if (philos[i].eat >= data->eat_required)
-			break ;
-		pthread_mutex_unlock(philos->left_fk);
-		pthread_mutex_unlock(philos->right_fk);
-		ft_sleep(philos);
-		printf("\033[0;34m Sleep... \033[0m %d\n", philos->id);
-		usleep(500);
+		printf("\033[0;31m Thinking... \033[0m { %d } \n", philos->id);
+		if (data->eat <= data->eat_required)
+		{
+			pthread_mutex_lock(philos[i].left_fk);
+			pthread_mutex_lock(philos[i].right_fk);
+			data->eat++;
+			data->start_time += data->time_to_eat;
+			printf("\033[0;32m the philo %d is eating...\033[0m\n", philos->id);
+			pthread_mutex_unlock(philos[i].left_fk);
+			pthread_mutex_unlock(philos[i].right_fk);
+		}
+		else
+			exit(1);
+		if (data->start_time >= data->end_sim)
+			philos[i].is_dead = true;
+		ft_sleep(philos, i);
+		// printf("\033[0;34m Sleep... \033[0m %d\n", philos->id);
+		i++;
 	}
-	i++;
 	// printf("sale bucle %d vez\n", i);
 	return (NULL);
 }
@@ -84,7 +112,7 @@ void	prepare_routine(t_pth *pth)
 	i = 0;
 	while (i < pth->data->n_philos)
 	{
-		pthread_join(pth->philos[i].thread, NULL);
+		pthread_join(pth->philos[i].thread, NULL); // Espera que uno de los hilos acabe la ejecucion
 		i++;
 	}
 	i = 0;
