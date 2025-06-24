@@ -1,43 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   checkargs.c                                        :+:      :+:    :+:   */
+/*   sleep.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 12:29:59 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/24 19:09:53 by daniel-cast      ###   ########.fr       */
+/*   Created: 2025/06/24 19:18:32 by daniel-cast       #+#    #+#             */
+/*   Updated: 2025/06/24 22:04:40 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	check_str(char *arg, int argc)
+int	time_over(long actual, t_philo *philo, int i)
 {
-	int	i;
-
-	i = 0;
-	while (arg[i])
+	if (actual >= philo->data->time_to_die)
 	{
-		if (ft_isdigit(arg[i]) == 0 && arg[i] != '+')
-			ft_error("ERROR: Invalid Argument 1!\n", 1);
-		i++;
+		philo[i].is_dead = true;
+		return (0);
 	}
-	printf("sale\n");
-	if (ft_atol(arg) >= 2147483647)
-		ft_error("ERROR: Invalid Argument 2!\n", 1);
+	return (1);
 }
 
-void	checkargs(int argc, char **argv)
+void	ft_usleep(long long start_eat, long long end_eat, t_philo *philo, int i)
 {
-	int	i;
+	long	actual;
 
-	i = 1;
-	if (argc < 5 || argc > 6)
-		ft_error("N args invalid\n", 1);
-	while (argv[i])
+	while ((get_time() - start_eat) >= end_eat)
 	{
-		check_str(argv[i], argc);
-		i++;
+		actual = get_time();
+		if (!time_over((actual - start_eat), philo, i))
+			break ;
+		usleep(100);
 	}
 }

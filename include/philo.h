@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:01:43 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/23 19:40:25 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/24 22:05:17 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ typedef struct s_datash
 	pthread_mutex_t	death;
 	unsigned int	end_sim;
 	int				eat;
-	unsigned int	start_time;
+	long long		start_time;
+	long long		last_eat;
 
 }	t_datash;
 
@@ -63,8 +64,12 @@ t_datash	*init_data(char **argv);
 t_philo		*init_philos(t_datash *data);
 void		prepare_routine(t_pth *pth);
 void		*do_routine(void *arg);
-void		keeper_monitor(t_pth *pth);
+void		take_forks(t_philo *philo, int i);
+void		*keeper_monitor(void *arg);
 void		ft_sleep(t_philo *philo, int i);
+long long	get_time(void);
+void		ft_usleep(long long start_eat, long long end_eat, t_philo *philo, int i);
+int			time_over(long actual, t_philo *philo, int i);
 
 // void	*ft_philos(void *arg);
 

@@ -6,62 +6,77 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 20:22:22 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/23 20:05:35 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/24 22:07:19 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	keeper_monitor(t_pth *pth)
+void	*keeper_monitor(void *arg)
 {
-	int	i;
+	int		i;
+	t_pth	*pth;
 
+	pth = (t_pth *)arg;
 	i = 0;
-	pthread_mutex_lock(&pth->data->death);
+	printf("monitor\n");
+	if (pth->philos[i].is_dead == true)
+	{
+		printf("\033[1;31m The philo ID %d is dead! \033[0m\n", pth->philos[i].id);
+		pthread_mutex_unlock(&pth->data->death);
+		pthread_mutex_destroy(&pth->data->death);
+		return (NULL);
+	}
 	while (pth->philos[i].is_dead != true)
 	{
+		pthread_mutex_lock(&pth->data->death);
 		if (pth->philos[i].is_dead == true)
 		{
-			printf("\033[1;31m The philo ID %d is dead! \033[0m\n");
+			printf("\033[1;31m The philo ID %d is dead! \033[0m\n", pth->philos[i].id);
 			pthread_mutex_unlock(&pth->data->death);
 			pthread_mutex_destroy(&pth->data->death);
-			return ;
+			return (NULL);
 		}
+		pthread_mutex_unlock(&pth->data->death);
 		i++;
 	}
-	pthread_mutex_unlock(&pth->data->death);
 }
 
 void	get_times(t_philo *philos)
 {
 	struct timeval	start;
-	unsigned int	milsegs;
-	long			end_time;
+	long long		milsegs;
+	long long		end_time;
 
 	gettimeofday(&start, NULL);
 	milsegs = (start.tv_sec * 1000) + (start.tv_usec / 1000);
-	end_time = (philos->data->time_to_die * 1000) + milsegs;
-	philos->data->end_sim = end_time;
-	philos->data->time_to_eat *= 1000; // pasarlo a milisegs
-	philos->data->time_to_sleep *= 1000;
 	philos->data->start_time = milsegs;
-	printf("tiempo --> %ld\n", milsegs);
-	printf("ÑÑÑÑÑÑÑ  tiempo time to eat --> %ld  ÑÑÑÑÑÑÑ \n", philos->data->time_to_eat);
-	printf("ZZZZZZZ  tiempo time to sleep --> %ld  ZZZZZ \n", philos->data->time_to_sleep);
-	printf("END  tiempo fin de simulacion --> %ld  END   \n", end_time);
+	end_time = milsegs + philos->data->time_to_die;
+	philos->data->end_sim = end_time;
+	// printf("tiempo --> %lld\n", milsegs);
+	// printf("ÑÑÑÑÑÑÑ time to eat --> %d  ÑÑ \n", philos->data->time_to_eat);
+	// printf("ZZZZZZZ time to sleep --> %d  ZZ \n", philos->data->time_to_sleep);
+	// printf("END  tiempo fin de simulacion --> %lld  END   \n", end_time);
 }
 
-void	ft_sleep(t_philo *philo, int i)
+void	take_forks(t_philo *philo, int i)
 {
-	philo[i].data->start_time += philo[i].data->time_to_sleep;
-	printf("\033[0;34m Sleep... \033[0m %d\n", philo[i].id);
-	// if (philo.data->start_time >= philo.data->end_sim)
-	// {
-	// 	philo.is_dead = true;
-	// 	return ;
-	// 			// printf("sale\n");
-	// 	// exit(1);
-	// }
+	if ((philo[i].id % 2) == 0)
+	{
+		pthread_mutex_lock(philo[i].left_fk);
+		pthread_mutex_lock(philo[i].right_fk);
+	}
+	else
+	{
+		pthread_mutex_lock(philo[i].right_fk);
+		pthread_mutex_lock(philo[i].left_fk);
+	}
+	philo->data->last_eat = get_time();
+	philo->data->eat++;
+	printf("\033[0;32m the philo %d is eating...\033[0m\n", philo[i].id);
+	ft_usleep(philo->data->last_eat, philo->data->time_to_die, philo, i);
+	pthread_mutex_unlock(philo[i].left_fk);
+	pthread_mutex_unlock(philo[i].right_fk);
 }
 
 void	*do_routine(void *arg)
@@ -72,27 +87,25 @@ void	*do_routine(void *arg)
 
 	i = 0;
 	philos = (t_philo *)arg;
+	data = philos->data;
 	get_times(philos);
 	while (1)
 	{
-		printf("\033[0;31m Thinking... \033[0m { %d } \n", philos->id);
-		if (data->eat <= data->eat_required)
+		printf("\033[0;31m Thinking... \033[0m { %d } \n", philos[i].id);
+		if (data->eat < data->eat_required)
 		{
-			pthread_mutex_lock(philos[i].left_fk);
-			pthread_mutex_lock(philos[i].right_fk);
-			data->eat++;
-			data->start_time += data->time_to_eat;
-			printf("\033[0;32m the philo %d is eating...\033[0m\n", philos->id);
-			pthread_mutex_unlock(philos[i].left_fk);
-			pthread_mutex_unlock(philos[i].right_fk);
+			// printf("ENTRA POR AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+			take_forks(philos, i);
 		}
-		else
-			exit(1);
-		if (data->start_time >= data->end_sim)
+		if ((get_time() - data->last_eat) >= data->time_to_die)
+		{
 			philos[i].is_dead = true;
+			printf("\033[1;31m The philo ID %d is dead! \033[0m\n", philos[i].id);
+			break ;
+		}
 		ft_sleep(philos, i);
 		// printf("\033[0;34m Sleep... \033[0m %d\n", philos->id);
-		i++;
+		i = (i + 1) % data->n_philos;
 	}
 	// printf("sale bucle %d vez\n", i);
 	return (NULL);
@@ -106,7 +119,8 @@ void	prepare_routine(t_pth *pth)
 	// printf("routiiiine --> %d\n", pth->data->n_philos);
 	while (i < pth->data->n_philos)
 	{
-		pthread_create(&pth->philos[i].thread, NULL, do_routine, (void *)&pth->philos[i]);
+		if (pthread_create(&pth->philos[i].thread, NULL, do_routine, (void *)&pth->philos[i]) != 0)
+			ft_error("ERROR: crear el hilo\n", 1);
 		i++;
 	}
 	i = 0;

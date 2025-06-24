@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 14:45:28 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/23 17:43:44 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/24 22:14:53 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,28 @@ int	ft_atol(const char *nptr)
 	if (result > 2147483647 || result < -2147483647)
 		ft_error("Longitud invalida\n", 1);
 	return ((int)result * chsg);
+}
+
+void	ft_sleep(t_philo *philo, int i)
+{
+
+	ft_usleep(get_time(), philo->data->time_to_die, philo, i);
+	printf("\033[0;34m Sleep... \033[0m %d\n", philo[i].id);
+	// if (philo.data->start_time >= philo.data->end_sim)
+	// {
+	// 	philo.is_dead = true;
+	// 	return ;
+	// 			// printf("sale\n");
+	// 	// exit(1);
+	// }
+}
+
+long long	get_time(void)
+{
+	struct timeval	start;
+	long long		milsegs;
+
+	gettimeofday(&start, NULL);
+	milsegs = (start.tv_sec * 1000) + (start.tv_usec / 1000);
+	return (milsegs);
 }
