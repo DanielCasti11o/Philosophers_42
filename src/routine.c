@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 20:22:22 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/24 22:07:19 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 09:02:16 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	take_forks(t_philo *philo, int i)
 	}
 	philo->data->last_eat = get_time();
 	philo->data->eat++;
-	printf("\033[0;32m the philo %d is eating...\033[0m\n", philo[i].id);
+	printf_mutex(philo, EAT, i);
 	ft_usleep(philo->data->last_eat, philo->data->time_to_die, philo, i);
 	pthread_mutex_unlock(philo[i].left_fk);
 	pthread_mutex_unlock(philo[i].right_fk);
@@ -100,7 +100,7 @@ void	*do_routine(void *arg)
 		if ((get_time() - data->last_eat) >= data->time_to_die)
 		{
 			philos[i].is_dead = true;
-			printf("\033[1;31m The philo ID %d is dead! \033[0m\n", philos[i].id);
+			printf_mutex(philos, DIED, i);
 			break ;
 		}
 		ft_sleep(philos, i);

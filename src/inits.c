@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:45:21 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/24 19:15:27 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 08:57:38 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ t_datash	*init_data(char **argv)
 
 	data = malloc(sizeof(t_datash));
 	data->n_philos = ft_atol(argv[1]);
-	// printf("n_philos --> %d\n", data->n_philos);
 	if (data->n_philos > 200)
 		ft_error("ERROR: limit exceeded to N_PHILOS\n", 1);
 	data->time_to_die = ft_atoui(argv[2]);
@@ -70,11 +69,10 @@ t_datash	*init_data(char **argv)
 	data->end_sim = ft_atoui(argv[2]); // aún no esta comprobado bien esta variable
 	data->eat = 0;
 	data->start_time = 0;
-	if (!ft_controls(data))
-		return (NULL);
-	// printf("n_philosss --> %d\n", data->n_philos);
-	if (pthread_mutex_init(&data->death, NULL) != 0)
-		pthread_mutex_destroy(&data->death);
+	if (!ft_controls(data) || !pthread_mutex_init(&data->death, NULL)
+		|| !pthread_mutex_init(&data->printfs, NULL)
+		|| !pthread_mutex_init(&data->lock_data, NULL))
+		return (pthread_mutex_destroy(&data->death), NULL);
 	data->forks = init_forks(data->n_philos);
 	if (!data->forks)
 		return (free(data), NULL);

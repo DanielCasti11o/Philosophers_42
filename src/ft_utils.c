@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 14:45:28 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/24 22:14:53 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 09:02:48 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	ft_sleep(t_philo *philo, int i)
 {
 
 	ft_usleep(get_time(), philo->data->time_to_die, philo, i);
-	printf("\033[0;34m Sleep... \033[0m %d\n", philo[i].id);
+	printf_mutex(philo, SLEEP, i);
 	// if (philo.data->start_time >= philo.data->end_sim)
 	// {
 	// 	philo.is_dead = true;
