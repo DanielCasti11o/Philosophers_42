@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:17:54 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 17:56:42 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 21:37:33 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,8 @@ void	action_mutex(t_philo *philo, int action)
 		return ;
 	}
 	if (action == EAT)
-	{
-		philo->data->eat++;
-		philo->last_eat = get_time();
-		printf_mutex(philo, EAT);
-	}
+		philo->eat++;
 	pthread_mutex_unlock(&philo->data->lock_data);
-	return ;
 }
 
 int	exit_to_program(t_philo *philo)
@@ -94,7 +89,7 @@ int	case_one_philo(t_philo *philo)
 	{
 		pthread_mutex_lock(philo->left_fk);
 		printf_mutex(philo, FORK);
-		ft_usleep((get_time() - philo->data->start_time), philo->data->time_to_die, philo);
+		usleep(philo->data->time_to_die * 1000);
 		pthread_mutex_unlock(philo->left_fk);
 		return (1);
 	}
@@ -102,21 +97,9 @@ int	case_one_philo(t_philo *philo)
 		return (0);
 }
 
-// int	someone_died(t_philo *philo)
-// {
-// 	int	i = 0;
-// 	int	res = 0;
-
-// 	pthread_mutex_lock(&philo->data->lock_data);
-// 	while (i < philo->data->n_philos)
-// 	{
-// 		if (philo[i].is_dead)
-// 		{
-// 			res = 1;
-// 			break ;
-// 		}
-// 		i++;
-// 	}
-// 	pthread_mutex_unlock(&philo->data->lock_data);
-// 	return (res);
-// }
+void	new_last_meal(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->lock_data);
+	philo->last_eat = get_time();
+	pthread_mutex_unlock(&philo->data->lock_data);
+}

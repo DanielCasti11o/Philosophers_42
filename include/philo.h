@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:01:43 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 16:44:11 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 21:34:12 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ typedef struct s_datash
 	unsigned int	eat_required; // comidas requeridas para acabar
 	pthread_mutex_t	*forks; // array de mutexes para los tenedores
 	unsigned int	end_sim;
-	int				eat;
 	bool			dead_flag;
 	long			start_time;
 	pthread_mutex_t	printfs;
@@ -45,6 +44,7 @@ typedef struct s_philo
 	pthread_mutex_t	*right_fk; // tenedores
 	pthread_mutex_t	*left_fk;
 	t_datash		*data;
+	int				eat;
 	bool			is_dead;
 
 }	t_philo;
@@ -76,7 +76,7 @@ t_datash	*init_data(char **argv);
 t_philo		*init_philos(t_datash *data);
 void		prepare_routine(t_pth *pth);
 void		*do_routine(void *arg);
-void		take_forks(t_philo *philo);
+int			take_forks(t_philo *philo);
 void		*keeper_monitor(void *arg);
 void		ft_sleep(t_philo *philo);
 long		get_time(void);
@@ -85,6 +85,8 @@ int			time_over(long actual, t_philo *philo);
 int			exit_to_program(t_philo *philo);
 int			someone_died(t_philo *philo);
 int			case_one_philo(t_philo *philo);
+int			handle_mutex_forks(t_philo *philo);
+void		new_last_meal(t_philo *philo);
 
 // FREE
 void		free_pth(t_pth *pth);

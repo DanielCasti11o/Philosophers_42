@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 14:45:28 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 16:31:09 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 21:39:54 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ void	ft_sleep(t_philo *philo)
 		return ;
 	}
 	pthread_mutex_unlock(&philo->data->lock_data);
-	ft_usleep(get_time(), philo->data->time_to_sleep, philo);
 	printf_mutex(philo, SLEEP);
+	usleep(philo->data->time_to_sleep * 1000);
 }
 
 long	get_time(void)

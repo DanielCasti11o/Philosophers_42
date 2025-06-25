@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:45:21 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 17:27:40 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 21:20:17 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ t_datash	*init_data(char **argv)
 		data->eat_required = -1;
 	data->end_sim = ft_atoui(argv[2]);
 	data->dead_flag = false;
-	data->eat = 0;
 	data->start_time = 0;
 	if (pthread_mutex_init(&data->printfs, NULL)
 		|| pthread_mutex_init(&data->lock_data, NULL))
@@ -89,6 +88,7 @@ t_philo	*init_philos(t_datash *data)
 		philo[i].right_fk = &(data->forks[(i + 1) % data->n_philos]);
 		philo[i].is_dead = false;
 		philo[i].last_eat = get_time();
+		philo[i].eat = 0;
 		philo[i].data = data;
 		i++;
 	}
