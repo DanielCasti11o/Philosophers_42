@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:45:21 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 08:57:38 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 17:27:40 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,16 @@ pthread_mutex_t	*init_forks(int n_philos)
 	{
 		if (pthread_mutex_init(&forks[i], NULL) != 0)
 		{
-			printf("dede\n");
 			while (i >= 0)
 			{
-				printf("uy\n");
 				pthread_mutex_destroy(&forks[i]);
 				i--;
 			}
 			free(forks);
 			return (NULL);
 		}
-		// printf("nnn--> %d\n", i);
 		i++;
 	}
-	// printf("sale good\n");
 	return (forks);
 }
 
@@ -46,7 +42,7 @@ int	ft_controls(t_datash *data)
 {
 	if (data->time_to_die < data->time_to_eat
 		|| data->time_to_die < data->time_to_sleep)
-			return (0);
+		return (printf("ERROR: insufficient time! \n"), 0);
 	else
 		return (1);
 }
@@ -56,7 +52,7 @@ t_datash	*init_data(char **argv)
 	t_datash	*data;
 
 	data = malloc(sizeof(t_datash));
-	data->n_philos = ft_atol(argv[1]);
+	data->n_philos = ft_atoui(argv[1]);
 	if (data->n_philos > 200)
 		ft_error("ERROR: limit exceeded to N_PHILOS\n", 1);
 	data->time_to_die = ft_atoui(argv[2]);
@@ -66,17 +62,16 @@ t_datash	*init_data(char **argv)
 		data->eat_required = ft_atoui(argv[5]);
 	else
 		data->eat_required = -1;
-	data->end_sim = ft_atoui(argv[2]); // aún no esta comprobado bien esta variable
+	data->end_sim = ft_atoui(argv[2]);
+	data->dead_flag = false;
 	data->eat = 0;
 	data->start_time = 0;
-	if (!ft_controls(data) || !pthread_mutex_init(&data->death, NULL)
-		|| !pthread_mutex_init(&data->printfs, NULL)
-		|| !pthread_mutex_init(&data->lock_data, NULL))
-		return (pthread_mutex_destroy(&data->death), NULL);
+	if (pthread_mutex_init(&data->printfs, NULL)
+		|| pthread_mutex_init(&data->lock_data, NULL))
+		return (pthread_mutex_destroy(&data->printfs), NULL);
 	data->forks = init_forks(data->n_philos);
 	if (!data->forks)
 		return (free(data), NULL);
-	// printf("n_philos aiba--> %d\n", data->n_philos);
 	return (data);
 }
 
@@ -86,19 +81,15 @@ t_philo	*init_philos(t_datash *data)
 	int		i;
 
 	i = 0;
-	// printf("sabes --> %d\n", data->n_philos);
 	philo = malloc(data->n_philos * sizeof(t_philo));
 	while (i < data->n_philos)
 	{
-		// printf("entra al bucle --> i---> %d philos-->%d \n", i, data->n_philos);
 		philo[i].id = i;
 		philo[i].left_fk = &data->forks[i];
-		// printf("left --> %p \n", philo[i].left_fk);
 		philo[i].right_fk = &(data->forks[(i + 1) % data->n_philos]);
-		// printf("right --> %p \n", philo[i].right_fk);
 		philo[i].is_dead = false;
+		philo[i].last_eat = get_time();
 		philo[i].data = data;
-		// printf("el problema\n");
 		i++;
 	}
 	return (philo);
@@ -113,9 +104,7 @@ t_pth	*init_struct(char **argv)
 		ft_error("ERROR: allocated memory \n", 1);
 	pth->data = init_data(argv);
 	if (!pth->data)
-		return (printf("sale pai\n"), free(pth), NULL);
-	// printf("saliross\n");
-	// printf("n_philos aibaros --> %d\n", pth->data->n_philos);
+		return (ft_error("ERROR: allocated memory \n", 1), free(pth), NULL);
 	pth->philos = init_philos(pth->data);
 	if (!pth->philos)
 		return (free(pth), NULL);

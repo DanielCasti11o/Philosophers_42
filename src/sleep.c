@@ -6,31 +6,31 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 19:18:32 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 01:19:39 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 16:41:38 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-int	time_over(long actual, t_philo *philo, int i)
+int	time_over(long actual, t_philo *philo)
 {
-	if (actual >= philo->data->time_to_die)
+	if ((actual - philo->last_eat) >= philo->data->time_to_die)
 	{
-		philo[i].is_dead = true;
+		action_mutex(philo, DIED_FLAG);
 		return (0);
 	}
 	return (1);
 }
 
-void	ft_usleep(long start, long end, t_philo *philo, int i)
+void	ft_usleep(long start, long end, t_philo *philo)
 {
 	long	actual;
 
-	while ((get_time() - start) >= end)
+	while ((get_time() - start) < end)
 	{
 		actual = get_time();
-		if (!time_over((actual - start), philo, i))
+		if (!time_over(actual, philo))
 			break ;
-		usleep(100);
+		usleep(50);
 	}
 }

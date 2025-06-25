@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 01:02:17 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 08:58:01 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 14:10:51 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	free_data(t_datash *data)
 {
 	if (data)
 	{
-		pthread_mutex_destroy(&data->death);
 		pthread_mutex_destroy(&data->printfs);
 		pthread_mutex_destroy(&data->lock_data);
 		if (data->forks)

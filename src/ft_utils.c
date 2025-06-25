@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 14:45:28 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 09:02:48 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/25 16:31:09 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_atoui(const char *nptr)
 	return (result);
 }
 
-void	ft_error(char *msg, int f)
+int	ft_error(char *msg, int f)
 {
 	int	i;
 
@@ -40,7 +40,7 @@ void	ft_error(char *msg, int f)
 		write(1, &msg[i], 1);
 		i++;
 	}
-	exit(f);
+	return (0);
 }
 
 int	ft_atol(const char *nptr)
@@ -67,21 +67,20 @@ int	ft_atol(const char *nptr)
 	return ((int)result * chsg);
 }
 
-void	ft_sleep(t_philo *philo, int i)
+void	ft_sleep(t_philo *philo)
 {
-
-	ft_usleep(get_time(), philo->data->time_to_die, philo, i);
-	printf_mutex(philo, SLEEP, i);
-	// if (philo.data->start_time >= philo.data->end_sim)
-	// {
-	// 	philo.is_dead = true;
-	// 	return ;
-	// 			// printf("sale\n");
-	// 	// exit(1);
-	// }
+	pthread_mutex_lock(&philo->data->lock_data);
+	if (philo->data->dead_flag == true)
+	{
+		pthread_mutex_unlock(&philo->data->lock_data);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->data->lock_data);
+	ft_usleep(get_time(), philo->data->time_to_sleep, philo);
+	printf_mutex(philo, SLEEP);
 }
 
-long long	get_time(void)
+long	get_time(void)
 {
 	struct timeval	start;
 	long long		milsegs;
