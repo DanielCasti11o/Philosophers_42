@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inits.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
+/*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:45:21 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/26 02:47:01 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/26 03:22:34 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ t_philo	*init_philos(t_datash *data)
 	philo = malloc(data->n_philos * sizeof(t_philo));
 	if (!philo)
 		return (NULL);
-	memset(philo, 0, sizeof(philo));
+	memset(philo, 0, sizeof(t_philo));
 	while (i < data->n_philos)
 	{
 		philo[i].id = i;

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+         #
+#    By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/24 18:45:56 by daniel-cast       #+#    #+#              #
-#    Updated: 2025/06/26 02:27:06 by daniel-cast      ###   ########.fr        #
+#    Updated: 2025/06/26 03:24:59 by dacastil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,17 @@ FLAGS = -Wall -Wextra -Werror -g3 -I./include  #-fsanitize=address -lpthread
 SRC_DIR = ./src
 LIBFT = ./libft_bonus/libft.a
 INCLUDE_DIR = ./include
-SRC = $(wildcard $(SRC_DIR)/*.c)
-INCLUDE = $(wildcard $(INCLUDE_DIR)/*.h)
+SRC = $(SRC_DIR)/checkargs.c		\
+		$(SRC_DIR)/free.c 			\
+		$(SRC_DIR)/ft_utils.c		\
+		$(SRC_DIR)/inits.c			\
+		$(SRC_DIR)/main.c			\
+		$(SRC_DIR)/routine.c		\
+		$(SRC_DIR)/sleep.c			\
+		$(SRC_DIR)/update.c		\
+		$(SRC_DIR)/utils_macros.c	\
+
+INCLUDE = $(INCLUDE_DIR)/philo.h
 OBJS = $(SRC:.c=.o)
 
 
@@ -55,18 +64,20 @@ all: $(EXEC)
 	@echo "           '''''\.              _/      ''^  '''---'^        "
 	@echo "                  '-..______..-/                             "
 
-$(EXEC) : $(OBJS)
+
+all: $(EXEC)
+
+$(EXEC): $(OBJS) $(LIBFT)
 	$(CC) $(FLAGS) $(OBJS) $(LIBFT) -o $(EXEC)
 
-%.o: $(SRC_DIR)/%.c
+%.o: $(SRC_DIR)/%.c $(INCLUDE)
 	$(CC) $(FLAGS) -c $< -o $@
 
 clean:
 	$(RM) $(OBJS)
 
-fclean:
-	@$(RM) $(OBJS) $(EXEC) > /dev/null 2>&1
-
+fclean: clean
+	$(RM) $(EXEC)
 
 re: fclean all
 
