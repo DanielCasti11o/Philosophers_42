@@ -6,14 +6,14 @@
 #    By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/24 18:45:56 by daniel-cast       #+#    #+#              #
-#    Updated: 2025/04/12 01:09:51 by daniel-cast      ###   ########.fr        #
+#    Updated: 2025/06/26 02:27:06 by daniel-cast      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
 EXEC = philo
 RM = rm -f
-FLAGS = -Wall -Wextra -Werror -g3 -I./include  # -fsanitize=address
+FLAGS = -Wall -Wextra -Werror -g3 -I./include  #-fsanitize=address -lpthread
 SRC_DIR = ./src
 LIBFT = ./libft_bonus/libft.a
 INCLUDE_DIR = ./include

@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:01:43 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 21:34:12 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/26 02:35:58 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,10 @@ typedef struct s_datash
 	unsigned int	end_sim;
 	bool			dead_flag;
 	long			start_time;
+	int				eat_fin;
 	pthread_mutex_t	printfs;
 	pthread_mutex_t	lock_data;
+	pthread_mutex_t	stop;
 }	t_datash;
 
 typedef struct s_philo
@@ -53,6 +55,7 @@ typedef struct s_pth
 {
 	t_datash	*data;
 	t_philo		*philos;
+	int			n_threads;
 }	t_pth;
 
 enum
@@ -73,12 +76,13 @@ int			check_str(char *arg, int argc);
 int			checkargs(int argc, char **argv);
 t_pth		*init_struct(char **argv);
 t_datash	*init_data(char **argv);
+void		util_init_data(t_datash *data, char **argv);
 t_philo		*init_philos(t_datash *data);
 void		prepare_routine(t_pth *pth);
 void		*do_routine(void *arg);
 int			take_forks(t_philo *philo);
-void		*keeper_monitor(void *arg);
-void		ft_sleep(t_philo *philo);
+void		*monitor_keep(void *arg);
+int			ft_sleep(t_philo *philo);
 long		get_time(void);
 void		ft_usleep(long start, long end, t_philo *philo);
 int			time_over(long actual, t_philo *philo);
@@ -87,11 +91,16 @@ int			someone_died(t_philo *philo);
 int			case_one_philo(t_philo *philo);
 int			handle_mutex_forks(t_philo *philo);
 void		new_last_meal(t_philo *philo);
+void		joins_threads(t_pth *pth);
+int			check_death(t_philo *philo, int i);
+int			update_meal(t_philo *philo);
+int			handle_stop(t_datash *data, t_philo *philo);
 
 // FREE
 void		free_pth(t_pth *pth);
 void		free_data(t_datash *data);
 void		free_forks(pthread_mutex_t *forks, int n);
+void		destroys(t_datash *data);
 
 // UTILS WITH MACROS
 void		printf_mutex(t_philo *philo, int action);

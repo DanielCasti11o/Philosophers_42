@@ -6,7 +6,7 @@
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 01:02:17 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/06/25 14:10:51 by daniel-cast      ###   ########.fr       */
+/*   Updated: 2025/06/26 02:42:37 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,19 @@ void	free_forks(pthread_mutex_t *forks, int n)
 
 void	free_data(t_datash *data)
 {
+	int	i;
+
+	i = 0;
 	if (data)
 	{
+		while (i < data->n_philos)
+		{
+			pthread_mutex_destroy(&data->forks[i]);
+			i++;
+		}
 		pthread_mutex_destroy(&data->printfs);
 		pthread_mutex_destroy(&data->lock_data);
+		pthread_mutex_destroy(&data->stop);
 		if (data->forks)
 			free_forks(data->forks, data->n_philos);
 		free(data);
